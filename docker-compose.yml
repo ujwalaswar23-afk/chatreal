@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  mongo:
+    image: mongo:6
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file:
+      - backend/.env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/realchat
+      - CLIENT_URL=http://localhost:5000
+      - NODE_ENV=production
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongo
+    volumes:
+      - ./backend/uploads:/app/backend/uploads
+volumes:
+  mongo_data:
